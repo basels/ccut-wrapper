@@ -1,0 +1,5 @@
+git+https://github.com/basels/ccut.git@dev-pip
+git+https://github.com/basels/mykgutils/
+flask-restful
+flask_wtf
+flask
