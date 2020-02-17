@@ -36,7 +36,7 @@ python validator/ccut_sheets.py -i my_spreadsheet.xlsx
 This will produce a file called `my_spreadsheet.ccut.json`
 
 #### Validate a directory of spreadsheets files and their `json` results files
-Run `ccut_sheets.py` over an `xlsx` file. As in:
+Run `ccut_sheets.py` over a directory of `xlsx` files and their matching `json`s. As in:
 ```
 python validator/ccut_sheets_validator.py -d my_dir/
 ```
