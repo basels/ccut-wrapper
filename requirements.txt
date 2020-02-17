@@ -1,5 +1,7 @@
-git+https://github.com/basels/ccut.git@dev-pip
-git+https://github.com/basels/mykgutils/
+ccut
 flask-restful
 flask_wtf
 flask
+pandas
+xlrd
+git+https://github.com/basels/mykgutils/
