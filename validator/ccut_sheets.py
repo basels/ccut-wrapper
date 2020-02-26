@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from baselutils import column_num2str, fclrprint
-from ccut import CCUT, QUDT_PROPERTIES_NAMESPACE, CCUT_NAMESPACE
+from ccut import ccut, QUDT_PROPERTIES_NAMESPACE, CCUT_NAMESPACE
 from json import dump
 from os.path import basename
 from pandas import ExcelFile, Series, isnull
@@ -44,7 +44,7 @@ def init_globals():
     ''' Initializes globals used in file. '''
 
     global g_ccut_inst, g_tot_num_of_sheets
-    g_ccut_inst = CCUT()
+    g_ccut_inst = ccut()
     g_tot_num_of_sheets = 0
 
 # --- processing --------------------------------------------------------------
@@ -120,7 +120,7 @@ def process_cell(cell_content):
     ###########################################################################
 
     try:
-        urepr = g_ccut_inst.ccu_repr(input_str)
+        urepr = g_ccut_inst.get_all_ccu(input_str)[0] # we check only the top result (TODO: fix)
         return process_ccu_repr_output(urepr)
     except:
         return None

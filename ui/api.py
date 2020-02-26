@@ -2,15 +2,13 @@
 
 from flask import Flask, request, jsonify, render_template
 from forms import TransformationForm, RepresentationForm
-from ccut import CCUT
+from ccut import ccut
 from ccut.main.config import Config
 from ccut.main.dimension_map import DimensionMap
-from ccut.main.symbol_map import SymbolMap
-from ccut.main.unit_match import UnitMatch
 
 app = Flask(__name__)
 app.config.from_object(Config)
-ccut = CCUT()
+ccut = ccut()
 
 @app.route("/")
 def hello():
@@ -21,18 +19,11 @@ def get_dimension_map():
     d = DimensionMap.get_instance()
     return jsonify(d.qd_map)
 
-@app.route("/best_unit_match")
-def best_unit_match_test():
-    s = SymbolMap.get_instance()
-    unit_string = request.args.get("u")
-    unit = UnitMatch.find_best_unit_match(unit_string, s)
-    return jsonify(unit)
-
 @app.route('/get_canonical_json', methods=['GET', 'POST'])
 def get_canonical_json():
     if "u" in request.args:
         unit_string = request.args.get("u")
-        return jsonify(ccut.ccu_repr(unit_string))
+        return jsonify(ccut.get_top_ccu(unit_string))
     form = RepresentationForm()
     return render_template('ccu_represent.html', title='Canonical Representation', form=form)
 
@@ -42,7 +33,7 @@ def transform_ccu():
         unit_in_string = request.args.get("in_unit")
         unit_out_string = request.args.get("out_unit")
         val_in = float(request.args.get("in_val"))
-        return jsonify(ccut.ccu2ccu_transform(unit_in_string, unit_out_string, val_in))
+        return jsonify(ccut.convert_str2str(unit_in_string, unit_out_string, val_in))
     form = TransformationForm()
     return render_template('ccu_transform.html', title='Canonical Transform', form=form)
 

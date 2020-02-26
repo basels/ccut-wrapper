@@ -5,6 +5,11 @@ This repository provides the following:
 * Allows running the CCUT service over a UI (and an accessible HTTP endpoint)
 * Provides additional validation tools to run CCUT over spreadsheets (`xlsx`) and validate them (`json`)
 
+## Installation
+With `pip`:
+```
+pip install -r requirements.txt
+```
 
 ### UI:
 How to run:
@@ -15,7 +20,7 @@ Navigate to `http://localhost:localport/` (usually set as `http://0.0.0.0:5000/`
 The UI allows performing operations over the browser, but also allows running against an HTTP endpoint.
 
 #### Get Unit Representation
-This example retrieves the representation of `km/s^2`:
+This example retrieves the (top-ranked) representation of `km/s^2`:
 ```
 curl -X GET "http://0.0.0.0:5000/get_canonical_json?u=km%20s^2"
 ```
