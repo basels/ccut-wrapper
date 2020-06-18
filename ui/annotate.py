@@ -1,5 +1,6 @@
 from ccut.main.symbol_map import SymbolMap
 from fuzzywuzzy.process import extract
+from re import findall
 
 URI_SEPARATOR = '#'
 NUM_RESULTS_TO_SUGGEST = 3
@@ -49,9 +50,32 @@ def fuzzy_search_unit(query):
     top_res = extract(query, unit_flat_list, limit=NUM_RESULTS_TO_SUGGEST)
     return top_res
 
-def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, exponent):
-    print('in add_annotation_to_cell(..)')
-    print(sheet, cell, multiplier, prefix, unit, exponent)
-    # TODO: update dict with unit --> update dimention --> save dict back to file
+
+def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, exponent):    
+    cell_row = findall(r'\d+', cell)[0]
+    cell_col = cell.split(cell_row)[0].upper()
+
+    if sheet not in ant_dict:
+        ant_dict[sheet] = dict()
+    if cell_col not in ant_dict[sheet]:
+        ant_dict[sheet][cell_col] = dict()
+    if cell_row not in ant_dict[sheet][cell_col]:
+        ant_dict[sheet][cell_col][cell_row] = list()
+
+    cell_list_inst = ant_dict[sheet][cell_col][cell_row]
+    prt_single = {'u': unit}
+    if len(multiplier) > 0:
+        prt_single['m'] = multiplier
+    if len(prefix) > 0:
+        prt_single['p'] = prefix
+    if len(exponent) > 0:
+        prt_single['e'] = exponent
+
+    if len(cell_list_inst) > 0: # assuming a single compound unit in cell
+        cell_list_inst[0]['parts'].append(prt_single)
+    else:
+        cell_list_inst.append({'dimension': "TODO", 'parts': [prt_single]})
+
+    print(ant_dict)
+    # TODO: 1. update dimension
     print('*'*100)
-    # print(ant_dict)

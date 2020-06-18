@@ -62,6 +62,9 @@ def load_annotation_file():
 def search_unit():
     global g_active_json
 
+    # TODO: 1. rename func/route/template
+    #       2. add save button to store dict back in original file
+
     init_flat_search_lists(g_active_json)
     form = AnnotationEditForm()
     if form.validate_on_submit():
