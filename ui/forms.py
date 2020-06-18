@@ -3,6 +3,7 @@ The TransformationForm class is used in the UI.
 '''
 
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
@@ -15,3 +16,7 @@ class TransformationForm(FlaskForm):
     out_unit = StringField('Output Unit', validators=[DataRequired()])
     in_val   = StringField('Input Value', validators=[DataRequired()])
     submit   = SubmitField('Generate')
+
+class AnnotationForm(FlaskForm):
+    in_file  = FileField(validators=[FileRequired()])
+    submit   = SubmitField('Upload')

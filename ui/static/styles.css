@@ -1,17 +1,2 @@
-table#t01 {
-  width: 100%;
-  background-color: #f8f9f9;
-}
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 
-span#sp01 {
-  background-color: #ebedef;
-  font-size: 8px;
-}
-
-span#sp_pos {
-  background-color: #a9dfbf;
-}
-
-span#sp_cand {
-  background-color: #fcc8b2;
-}

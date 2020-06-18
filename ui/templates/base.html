@@ -1,24 +1,41 @@
 <html>
-    <head>
-      {% if title %}
-      <title>{{ title }} - MINT Transformations</title>
-      {% else %}
-      <title>Welcome to MINT Transformations</title>
-      {% endif %}
-      <meta charset="utf-8"> 
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="static/styles.css" rel="stylesheet" type="text/css" media="all">
-    </head>
-    <body>
-        <div>
-          <img height="50" src="{{url_for('static', filename='logo.png')}}">  
-          MINT Transformations: 
-          <a href="/">Home</a>
-          <a href="/get_canonical_json">Compound Unit Representation</a>
-          <a href="/trans_form">Compound Units Conversion</a>
-          <a href="/get_dimension_map">Dimension Map</a>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="static/styles.css" rel="stylesheet" type="text/css" media="all">
+    <title>CCUT WRAPPER</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+
+  <header>
+      <nav class="navbar navbar-default navbar-static-top navbar-inverse">
+        <div class="container">
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/">Home</a></li>
+              <li><a href="/get_canonical_json">Parse/Represent</a></li>
+              <li><a href="/trans_form">Convert</a></li>
+              <li><a href="/annotate">Annotate</a></li>
+            </ul>
+          </div>
         </div>
-        <hr>
+      </nav>
+    </header>
+    <div class="container center">
+      <section>
         {% block content %}{% endblock %}
-    </body>
+      </section>
+      <!--
+      <footer class="footer">
+        <div class="inner">
+          <small><a href="https://github.com/basels/ccut/">CCUT</a> is by <a href="https://github.com/basels/">@basels</a>.</small>
+        </div>
+      </footer>
+      -->
+    </div>
+    
+  </body>
 </html>
