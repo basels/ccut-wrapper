@@ -5,11 +5,13 @@ from os.path import exists
 from json import load
 from werkzeug.utils import secure_filename
 from flask import Flask, request, redirect, jsonify, render_template, url_for
-from forms import TransformationForm, RepresentationForm, AnnotationForm
+from forms import *
+from search import *
 from ccut import ccut
 from ccut.main.config import Config
 
 STORAGE_FOLDER = '/tmp/ccut_uploads/'
+QUDT_NAMESPACE = 'http://www.qudt.org/qudt/owl/1.0.0/unit/Instances.html#'
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -42,7 +44,7 @@ def transform_ccu():
 def load_annotation_file():
     global g_active_json
 
-    ant_form = AnnotationForm()
+    ant_form = AnnotationUploadForm()
     if ant_form.validate_on_submit():
         f = ant_form.in_file.data
         filename = secure_filename(f.filename)
@@ -52,15 +54,32 @@ def load_annotation_file():
         f.save(g_active_filename)
         with open(g_active_filename, 'r') as read_file_h:
             g_active_json = load(read_file_h)
-        return redirect(url_for('edit_annotation_file'))
+        return redirect(url_for('search_unit'))
     else:
         return render_template('ant_file_upload.html', form=ant_form)
 
-@app.route('/eannotate', methods=['GET', 'POST'])
-def edit_annotation_file():
+@app.route('/search', methods=['GET', 'POST'])
+def search_unit():
     global g_active_json
 
-    return render_template('ant_file_view.html', ant_dict=g_active_json)
+    init_flat_search_lists()
+
+    form = AnnotationEditForm()
+    
+    return render_template('ccu_search.html', ant_dict=g_active_json, form=form)
+
+@app.route("/search/<string:box>")
+def process(box):
+    query = request.args.get('query')
+    suggestions = list()
+    if box == 'q_prefix':
+        suggest_list = fuzzy_search_prefix(query)
+    if box == 'q_unit':
+        suggest_list = fuzzy_search_unit(query)
+    for itm in suggest_list:
+        suggestions.append({'value': itm[0], 'data': QUDT_NAMESPACE+itm[0]})
+    # print(suggestions)
+    return jsonify({"suggestions":suggestions})
 
 #########################################################################
 

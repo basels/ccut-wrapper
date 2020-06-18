@@ -1,6 +1,4 @@
-'''
-The TransformationForm class is used in the UI.
-'''
+''' The following form classes are used in the UI '''
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
@@ -17,6 +15,12 @@ class TransformationForm(FlaskForm):
     in_val   = StringField('Input Value', validators=[DataRequired()])
     submit   = SubmitField('Generate')
 
-class AnnotationForm(FlaskForm):
+class AnnotationUploadForm(FlaskForm):
     in_file  = FileField(validators=[FileRequired()])
     submit   = SubmitField('Upload')
+
+class AnnotationEditForm(FlaskForm):
+    cell = StringField('Cell')
+    m = StringField('Multiplier')
+    e = StringField('Exponent')
+    submit = SubmitField('Add')

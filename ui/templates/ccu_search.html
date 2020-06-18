@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% macro hide_namespace(str) %}
+    {{str.replace('http://www.qudt.org/qudt/owl/1.0.0/unit/Instances.html#', 'q:')}}
+{% endmacro %}
+
+{% block content %}
+
+  {{ form.hidden_tag() }}
+  <p>
+  {{form.cell.label}}: {{form.cell(size=4)}}
+  <br />
+  {{form.m.label}}: {{form.m(size=4)}}
+  Prefix: <input type="text" name="q_prefix" id="autocomplete1"/>
+  Unit: <input type="text" name="q_unit" id="autocomplete2"/>
+  {{form.e.label}}: {{form.e(size=4)}}
+  </p>
+  <p>{{ form.submit() }}</p>
+
+  <div class="row container center" style="text-align: center;">
+    {% for sheet_n,sheet_d in ant_dict.items() %}
+    <h1>{{sheet_n}}</h1>
+    <hr />
+        {% for col_n,col_d in sheet_d.items() %}
+            {% for row_n,row_d in col_d.items() %}
+            <div class="card border-primary border center">
+                <h4 class="card-header" style="color:#9932CC;">{{col_n}}{{row_n}}</h5>
+                <div class="card-body" style="border-style: solid; border-width: 2px;">
+                {% for c_unit in row_d %}
+                    <div class="card-body" style="border-style: solid; border-width: 1px; ">
+                        <span class="badge">{{c_unit['dimension']}}</span>&nbsp;
+                        {% for unit in c_unit['parts'] %}
+                            {% if 'm' in unit %}<span class="badge" style="background-color: #0CCE6B">{{unit['m']}}</span>{% endif %}{% if 'p' in unit %}<span class="badge" style="background-color: #26408B">{{hide_namespace(unit['p'])}}</span>{% endif %}{% if 'u' in unit %}<span class="badge" style="background-color: #EF2D56">{{hide_namespace(unit['u'])}}</span>{% endif %}{% if 'e' in unit %}<span class="badge" style="background-color: #ED7D3A">{{unit['e']}}</span>{% endif %}
+                            &nbsp;
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+  </div>
+
+  <script>
+  $('#autocomplete1').autocomplete({
+      serviceUrl: '/search/q_prefix',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+  $('#autocomplete2').autocomplete({
+      serviceUrl: '/search/q_unit',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+  </script>
+
+{% endblock %}
