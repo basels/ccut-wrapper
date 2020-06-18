@@ -6,9 +6,14 @@ NUM_RESULTS_TO_SUGGEST = 3
 
 prefix_flat_list = list()
 unit_flat_list = list()
+sheet_flat_list = list()
 
-def init_flat_search_lists():
-    global prefix_flat_list, unit_flat_list
+def init_flat_search_lists(active_dict):
+    global sheet_flat_list, prefix_flat_list, unit_flat_list
+
+    for sheet_n in active_dict.keys():
+        if sheet_n not in sheet_flat_list:
+            sheet_flat_list.append(sheet_n)
 
     if len(prefix_flat_list) == 0:
         d = SymbolMap.get_instance()
@@ -29,14 +34,24 @@ def init_flat_search_lists():
                     if prefixeless_uri not in unit_flat_list:
                         unit_flat_list.append(prefixeless_uri)
 
+def fuzzy_search_sheet(query):
+    global sheet_flat_list
+    top_res = extract(query, sheet_flat_list, limit=NUM_RESULTS_TO_SUGGEST)
+    return top_res
+
 def fuzzy_search_prefix(query):
     global prefix_flat_list
-
     top_res = extract(query, prefix_flat_list, limit=NUM_RESULTS_TO_SUGGEST)
     return top_res
 
 def fuzzy_search_unit(query):
     global unit_flat_list
-    
     top_res = extract(query, unit_flat_list, limit=NUM_RESULTS_TO_SUGGEST)
     return top_res
+
+def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, exponent):
+    print('in add_annotation_to_cell(..)')
+    print(sheet, cell, multiplier, prefix, unit, exponent)
+    # TODO: update dict with unit --> update dimention --> save dict back to file
+    print('*'*100)
+    # print(ant_dict)

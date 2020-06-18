@@ -6,16 +6,19 @@
 
 {% block content %}
 
-  {{ form.hidden_tag() }}
-  <p>
-  {{form.cell.label}}: {{form.cell(size=4)}}
-  <br />
-  {{form.m.label}}: {{form.m(size=4)}}
-  Prefix: <input type="text" name="q_prefix" id="autocomplete1"/>
-  Unit: <input type="text" name="q_unit" id="autocomplete2"/>
-  {{form.e.label}}: {{form.e(size=4)}}
-  </p>
-  <p>{{ form.submit() }}</p>
+  <form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+    {{form.q_sheet.label}}: {{form.q_sheet(size=10)}}
+    {{form.cell.label}}: {{form.cell(size=4)}}
+    <br />
+    {{form.m.label}}: {{form.m(size=4)}}
+    {{form.q_prefix.label}}: {{form.q_prefix(size=10)}}
+    {{form.q_unit.label}}: {{form.q_unit(size=10)}}
+    {{form.e.label}}: {{form.e(size=4)}}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
 
   <div class="row container center" style="text-align: center;">
     {% for sheet_n,sheet_d in ant_dict.items() %}
@@ -39,11 +42,20 @@
             </div>
             {% endfor %}
         {% endfor %}
+    <br />
     {% endfor %}
   </div>
 
   <script>
-  $('#autocomplete1').autocomplete({
+  $('#q_sheet').autocomplete({
+      serviceUrl: '/search/q_sheet',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+  $('#q_prefix').autocomplete({
       serviceUrl: '/search/q_prefix',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {
@@ -51,7 +63,7 @@
       }
   });
 
-  $('#autocomplete2').autocomplete({
+  $('#q_unit').autocomplete({
       serviceUrl: '/search/q_unit',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {

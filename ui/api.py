@@ -6,7 +6,7 @@ from json import load
 from werkzeug.utils import secure_filename
 from flask import Flask, request, redirect, jsonify, render_template, url_for
 from forms import *
-from search import *
+from annotate import *
 from ccut import ccut
 from ccut.main.config import Config
 
@@ -44,9 +44,9 @@ def transform_ccu():
 def load_annotation_file():
     global g_active_json
 
-    ant_form = AnnotationUploadForm()
-    if ant_form.validate_on_submit():
-        f = ant_form.in_file.data
+    form = AnnotationUploadForm()
+    if form.validate_on_submit():
+        f = form.in_file.data
         filename = secure_filename(f.filename)
         if not exists(STORAGE_FOLDER):
             makedirs(STORAGE_FOLDER)
@@ -56,29 +56,37 @@ def load_annotation_file():
             g_active_json = load(read_file_h)
         return redirect(url_for('search_unit'))
     else:
-        return render_template('ant_file_upload.html', form=ant_form)
+        return render_template('ant_file_upload.html', form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_unit():
     global g_active_json
 
-    init_flat_search_lists()
-
+    init_flat_search_lists(g_active_json)
     form = AnnotationEditForm()
-    
+    if form.validate_on_submit():
+        add_annotation_to_cell(g_active_json,
+                               form.q_sheet.data,
+                               form.cell.data,
+                               form.m.data,
+                               QUDT_NAMESPACE+form.q_prefix.data,
+                               QUDT_NAMESPACE+form.q_unit.data,
+                               form.e.data)
+
     return render_template('ccu_search.html', ant_dict=g_active_json, form=form)
 
 @app.route("/search/<string:box>")
 def process(box):
     query = request.args.get('query')
     suggestions = list()
+    if box == 'q_sheet':
+        suggest_list = fuzzy_search_sheet(query)
     if box == 'q_prefix':
         suggest_list = fuzzy_search_prefix(query)
     if box == 'q_unit':
         suggest_list = fuzzy_search_unit(query)
     for itm in suggest_list:
-        suggestions.append({'value': itm[0], 'data': QUDT_NAMESPACE+itm[0]})
-    # print(suggestions)
+        suggestions.append({'value': itm[0], 'data': itm[0]})
     return jsonify({"suggestions":suggestions})
 
 #########################################################################

@@ -6,7 +6,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 class RepresentationForm(FlaskForm):
-    u = StringField('Unit',  validators=[DataRequired()])
+    u        = StringField('Unit',  validators=[DataRequired()])
     submit   = SubmitField('Generate')
 
 class TransformationForm(FlaskForm):
@@ -20,7 +20,10 @@ class AnnotationUploadForm(FlaskForm):
     submit   = SubmitField('Upload')
 
 class AnnotationEditForm(FlaskForm):
-    cell = StringField('Cell')
-    m = StringField('Multiplier')
-    e = StringField('Exponent')
-    submit = SubmitField('Add')
+    q_sheet  = StringField('Sheet', validators=[DataRequired()])
+    cell     = StringField('Cell',  validators=[DataRequired()])
+    m        = StringField('Multiplier')
+    q_prefix = StringField('Prefix')
+    q_unit   = StringField('Unit',  validators=[DataRequired()])
+    e        = StringField('Exponent')
+    submit   = SubmitField('Add')
