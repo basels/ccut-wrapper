@@ -15,7 +15,7 @@ class TransformationForm(FlaskForm):
     in_val   = StringField('Input Value', validators=[DataRequired()])
     submit   = SubmitField('Generate')
 
-class AnnotationUploadForm(FlaskForm):
+class FileUploadForm(FlaskForm):
     in_file  = FileField(validators=[FileRequired()])
     submit   = SubmitField('Upload')
 

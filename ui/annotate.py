@@ -2,6 +2,7 @@ from ccut.main.symbol_map import SymbolMap
 from fuzzywuzzy.process import extract
 from re import findall
 
+QUDT_NAMESPACE = 'http://www.qudt.org/qudt/owl/1.0.0/unit/Instances.html#'
 URI_SEPARATOR = '#'
 NUM_RESULTS_TO_SUGGEST = 3
 
@@ -63,11 +64,11 @@ def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, expo
         ant_dict[sheet][cell_col][cell_row] = list()
 
     cell_list_inst = ant_dict[sheet][cell_col][cell_row]
-    prt_single = {'u': unit}
+    prt_single = {'u': QUDT_NAMESPACE+unit}
     if len(multiplier) > 0:
         prt_single['m'] = multiplier
     if len(prefix) > 0:
-        prt_single['p'] = prefix
+        prt_single['p'] = QUDT_NAMESPACE+prefix
     if len(exponent) > 0:
         prt_single['e'] = exponent
 
@@ -76,6 +77,6 @@ def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, expo
     else:
         cell_list_inst.append({'dimension': "TODO", 'parts': [prt_single]})
 
-    print(ant_dict)
+    # print(ant_dict)
     # TODO: 1. update dimension
     print('*'*100)
