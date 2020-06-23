@@ -51,7 +51,6 @@ def fuzzy_search_unit(query):
     top_res = extract(query, unit_flat_list, limit=NUM_RESULTS_TO_SUGGEST)
     return top_res
 
-
 def add_annotation_to_cell(ant_dict, sheet, cell, multiplier, prefix, unit, exponent):    
     cell_row = findall(r'\d+', cell)[0]
     cell_col = cell.split(cell_row)[0].upper()

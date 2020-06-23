@@ -30,6 +30,7 @@ def get_canonical_json():
         unit_string = request.args.get("u")
         return jsonify(ccut.get_top_ccu(unit_string))
     form = RepresentationForm()
+    # TODO: show list of all possible representation and choose
     return render_template('ccu_represent.html', form=form)
 
 @app.route('/trans_form', methods=['GET', 'POST'])
@@ -58,7 +59,7 @@ def load_annotation_file():
             g_active_json = load(read_file_h)
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('ant_file_upload.html', form=form)
+        return render_template('file_upload.html', form=form)
 
 @app.route('/process_tables', methods=['GET', 'POST'])
 def process_spreadsheet_file():
@@ -79,7 +80,7 @@ def process_spreadsheet_file():
 
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('ant_file_upload.html', form=form)
+        return render_template('file_upload.html', form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
 def edit_annotation_file():
