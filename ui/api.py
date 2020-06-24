@@ -41,6 +41,7 @@ def transform_ccu():
         val_in = float(request.args.get("in_val"))
         return jsonify(ccut.convert_str2str(unit_in_string, unit_out_string, val_in))
     form = TransformationForm()
+    # TODO: show list of all possible representation and choose
     return render_template('ccu_transform.html', form=form)
 
 @app.route('/annotate', methods=['GET', 'POST'])
@@ -59,7 +60,7 @@ def load_annotation_file():
             g_active_json = load(read_file_h)
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('file_upload.html', form=form)
+        return render_template('file_upload.html', form=form, file_ext='.json')
 
 @app.route('/process_tables', methods=['GET', 'POST'])
 def process_spreadsheet_file():
@@ -80,13 +81,13 @@ def process_spreadsheet_file():
 
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('file_upload.html', form=form)
+        return render_template('file_upload.html', form=form, file_ext='.xlsx')
 
 @app.route('/search', methods=['GET', 'POST'])
 def edit_annotation_file():
     global g_active_json, g_active_filename
 
-    # TODO: ability to remove units from cells (minus icon next to each 'parts') --> re-calc dimension
+    # TODO: ability to remove units from cells (minus icon next to each 'parts')
 
     init_flat_search_lists(g_active_json)
     form = AnnotationEditForm()
