@@ -50,7 +50,7 @@
 
   <script>
   $('#q_sheet').autocomplete({
-      serviceUrl: '/search/q_sheet',
+      serviceUrl: '/edit/q_sheet',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {
         console.log(query);
@@ -58,7 +58,7 @@
   });
 
   $('#q_prefix').autocomplete({
-      serviceUrl: '/search/q_prefix',
+      serviceUrl: '/edit/q_prefix',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {
         console.log(query);
@@ -66,7 +66,7 @@
   });
 
   $('#q_unit').autocomplete({
-      serviceUrl: '/search/q_unit',
+      serviceUrl: '/edit/q_unit',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {
         console.log(query);
