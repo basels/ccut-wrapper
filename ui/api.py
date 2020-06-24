@@ -87,8 +87,6 @@ def process_spreadsheet_file():
 def edit_annotation_file():
     global g_active_json, g_active_filename
 
-    # TODO: ability to remove units from cells (minus icon next to each 'parts')
-
     init_flat_search_lists(g_active_json)
     form = AnnotationEditForm()
     if form.validate_on_submit():
@@ -110,6 +108,27 @@ def save_annotation_file():
         with open(g_active_filename, 'w') as outfile:
             dump(g_active_json, outfile, indent=2)
 
+    return redirect(url_for('edit_annotation_file'))
+
+
+@app.route('/remove', methods=['GET'])
+def remove_element_in_annotation_file():
+    global g_active_json
+
+    # s=sheet, c=column, r=row, i=part_index_in_cell
+    if 's' in request.args:
+        sheet = request.args.get('s')
+        if 'c' in request.args:
+            col = request.args.get('c')
+            if 'r' in request.args:
+                row = request.args.get('r')
+                if 'i' in request.args:
+                    idx = request.args.get('i')
+                    del g_active_json[sheet][col][row][0]['parts'][int(idx)-1]
+                    return redirect(url_for('edit_annotation_file'))
+                del g_active_json[sheet][col][row]
+                return redirect(url_for('edit_annotation_file'))
+        del g_active_json[sheet]
     return redirect(url_for('edit_annotation_file'))
 
 @app.route("/search/<string:box>")

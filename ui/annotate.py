@@ -6,7 +6,7 @@ from re import findall
 
 QUDT_NAMESPACE = 'http://www.qudt.org/qudt/owl/1.0.0/unit/Instances.html#'
 URI_SEPARATOR = '#'
-NUM_RESULTS_TO_SUGGEST = 3
+NUM_RESULTS_TO_SUGGEST = 5
 
 sheet_flat_list = list()
 prefix_flat_list = list()
