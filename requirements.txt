@@ -5,3 +5,5 @@ flask
 pandas
 xlrd
 git+https://github.com/basels/mykgutils/
+fuzzywuzzy
+python-Levenshtein

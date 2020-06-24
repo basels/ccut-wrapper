@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% macro hide_namespace(str) %}
+    {{str.replace('http://www.qudt.org/qudt/owl/1.0.0/unit/Instances.html#', 'q:')}}
+{% endmacro %}
+
+{% block content %}
+
+  <h3>Editing file <small><span style="color: #8332AC; font-family: 'Courier New'">{{fname}}</span></small> <a href="/save"><span class="badge" style="background-color: #84DCCF">Save</span></a> </h3>
+
+  <form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+    {{form.q_sheet.label}}: {{form.q_sheet(size=10)}}
+    {{form.cell.label}}: {{form.cell(size=4)}}
+    <br />
+    {{form.m.label}}: {{form.m(size=4)}}
+    {{form.q_prefix.label}}: {{form.q_prefix(size=10)}}
+    {{form.q_unit.label}}: {{form.q_unit(size=10)}}
+    {{form.e.label}}: {{form.e(size=4)}}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
+
+  <div class="row container center" style="text-align: center;">
+    {% for sheet_n,sheet_d in ant_dict.items() %}
+    <h1>{{sheet_n}}<a href="/remove?s={{sheet_n}}"><span class="badge" style="background-color: #F0F465; color:#000000">-</span></a></h1>
+    <hr />
+        {% for col_n,col_d in sheet_d.items() %}
+            {% for row_n,row_d in col_d.items() %}
+            <div class="card border-primary border center">
+                <h4 class="card-header" style="color:#9932CC;">{{col_n}}{{row_n}}<a href="/remove?s={{sheet_n}}&c={{col_n}}&r={{row_n}}"><span class="badge" style="background-color: #F0F465; color:#000000">-</span></a></h4>
+                <div class="card-body" style="border-style: solid; border-width: 2px;">
+                {% for c_unit in row_d %}
+                    <div class="card-body" style="border-style: solid; border-width: 1px; ">
+                        <span class="badge">{{c_unit['dimension']}}</span>&nbsp;
+                        {% for unit in c_unit['parts'] %}
+                            {% if 'm' in unit %}<span class="badge" style="background-color: #0CCE6B">{{unit['m']}}</span>{% endif %}{% if 'p' in unit %}<span class="badge" style="background-color: #26408B">{{hide_namespace(unit['p'])}}</span>{% endif %}{% if 'u' in unit %}<span class="badge" style="background-color: #EF2D56">{{hide_namespace(unit['u'])}}</span>{% endif %}{% if 'e' in unit %}<span class="badge" style="background-color: #ED7D3A">{{unit['e']}}</span>{% endif %}<a href="/remove?s={{sheet_n}}&c={{col_n}}&r={{row_n}}&i={{loop.index}}"><span class="badge" style="background-color: #F0F465; color:#000000">-</span></a>
+                            &nbsp;
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    <br />
+    {% endfor %}
+  </div>
+
+  <script>
+  $('#q_sheet').autocomplete({
+      serviceUrl: '/edit/q_sheet',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+  $('#q_prefix').autocomplete({
+      serviceUrl: '/edit/q_prefix',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+  $('#q_unit').autocomplete({
+      serviceUrl: '/edit/q_unit',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+  </script>
+
+{% endblock %}
