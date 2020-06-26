@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>Parse a compound unit string to an ontologized canonical representation</h3>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+        {{ form.u.label }}: {{ form.u(size=20) }} <small style='color: #0000FF'>(e.g., km^2/hr^3)</small>
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% for cu in response %}
+        <pre>{{ cu }}</pre>
+    {% endfor %}
+{% endblock %}

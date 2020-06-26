@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h3>Convert between compound units</h3>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.in_unit.label }}: {{ form.in_unit(size=20) }}
+            <small style='color: #0000FF'>(e.g., mi)</small>
+            <br />
+            {{ form.out_unit.label }}: {{ form.out_unit(size=20) }}
+            <small style='color: #0000FF'>(e.g., km)</small>
+            <br />
+            {{ form.in_val.label }}: {{ form.in_val(size=10) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% if result != '' %}
+        <pre>{{ result }}</pre>
+    {% endif %}
+
+{% endblock %}

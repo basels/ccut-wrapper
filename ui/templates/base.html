@@ -10,15 +10,15 @@
   </head>
 
   <body>
-
-  <header>
+    
+    <header>
       <nav class="navbar navbar-default navbar-static-top navbar-inverse">
         <div class="container">
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
               <li><a href="/">Home</a></li>
-              <li><a href="/get_canonical_json">[string] Parse</a></li>
-              <li><a href="/trans_form">[string] Convert</a></li>
+              <li><a href="/parse">[string] Parse</a></li>
+              <li><a href="/convert">[string] Convert</a></li>
               <li><a href="/process_tables">[table] Extract</a></li>
               <li><a href="/annotate">[table] Annotate</a></li>
             </ul>
@@ -26,18 +26,15 @@
         </div>
       </nav>
     </header>
+
     <div class="container center">
+      <div class="inner">
+        <small><a href="https://github.com/basels/ccut/">CCUT</a> is by <a href="https://github.com/basels/">@basels</a>.</small>
+      </div>
       <section>
         {% block content %}{% endblock %}
       </section>
-      <!--
-      <footer class="footer">
-        <div class="inner">
-          <small><a href="https://github.com/basels/ccut/">CCUT</a> is by <a href="https://github.com/basels/">@basels</a>.</small>
-        </div>
-      </footer>
-      -->
     </div>
-    
+
   </body>
 </html>

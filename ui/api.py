@@ -4,8 +4,8 @@ from ccut import ccut
 from ccut.main.config import Config
 from ccut_sheets import init_globals, process_file
 from flask import Flask, request, redirect, jsonify, render_template, url_for
-from forms import RepresentationForm, TransformationForm, FileUploadForm, AnnotationEditForm
-from json import load, dump
+from forms import ParseForm, ConversionForm, FileUploadForm, AnnotationEditForm
+from json import load, dump, dumps
 from os import makedirs
 from os.path import exists
 from werkzeug.utils import secure_filename
@@ -30,35 +30,31 @@ def welcome():
 
     return render_template('generic.html', data='Welcome to CCUT Wrapper!')
 
-@app.route('/get_canonical_json', methods=['GET', 'POST'])
-def get_canonical_json():
+@app.route('/parse', methods=['GET', 'POST'])
+def parse():
     ''' Page to handle Canonical Compound Unit Parsing '''
+    
+    str_list = list()
+    form = ParseForm()
+    if form.validate_on_submit():
+        cu_list = ccut.get_all_ccu(form.u.data)
+        for cu in cu_list:
+            str_list.append(dumps(cu, sort_keys=True, indent=4, separators=(',', ': ')))
 
-    ARG_UNIT = 'u'
-    if ARG_UNIT in request.args:
-        unit_string = request.args.get(ARG_UNIT)
-        return jsonify(ccut.get_top_ccu(unit_string))
-    form = RepresentationForm()
+    return render_template('ccu_parse.html', form=form, response=str_list)
 
-    # TODO: show list of all possible representation and choose
-    return render_template('ccu_represent.html', form=form)
+@app.route('/convert', methods=['GET', 'POST'])
+def convert():
+    ''' Page to handle Canonical Compound Unit Conversion '''
 
-@app.route('/trans_form', methods=['GET', 'POST'])
-def transform_ccu():
-    ''' Page to handle Canonical Compound Unit Transformation '''
-
-    ARG_INUNIT = "in_unit"
-    ARG_OUTUNIT = "out_unit"
-    ARG_INVAL = "in_val"
-    if ARG_INUNIT in request.args and ARG_OUTUNIT in request.args and ARG_INVAL in request.args:
-        unit_in_string = request.args.get(ARG_INUNIT)
-        unit_out_string = request.args.get(ARG_OUTUNIT)
-        val_in = float(request.args.get(ARG_INVAL))
-        return jsonify(ccut.convert_str2str(unit_in_string, unit_out_string, val_in))
-    form = TransformationForm()
+    result = ''
+    form = ConversionForm()
+    if form.validate_on_submit():
+        res = ccut.convert_str2str(form.in_unit.data, form.out_unit.data, float(form.in_val.data))
+        result = dumps(res, sort_keys=True, indent=4, separators=(',', ': '))
 
     # TODO: show list of all possible representation and choose
-    return render_template('ccu_transform.html', form=form)
+    return render_template('ccu_convert.html', form=form, result=result)
 
 @app.route('/annotate', methods=['GET', 'POST'])
 def load_annotation_file():
@@ -78,7 +74,7 @@ def load_annotation_file():
             g_active_json = load(read_file_h)
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('file_upload.html', form=form, file_ext='.json')
+        return render_template('file_upload.html', form=form, title='Upload annotation file', file_ext='.json')
 
 @app.route('/process_tables', methods=['GET', 'POST'])
 def process_spreadsheet_file():
@@ -99,9 +95,10 @@ def process_spreadsheet_file():
         with open(g_active_filename, 'w') as outfile:
             dump(g_active_json, outfile, indent=2)
 
+        # TODO: color original xlsx
         return redirect(url_for('edit_annotation_file'))
     else:
-        return render_template('file_upload.html', form=form, file_ext='.xlsx')
+        return render_template('file_upload.html', form=form, title='Process spreadsheet file', file_ext='.xlsx')
 
 @app.route('/edit', methods=['GET', 'POST'])
 def edit_annotation_file():
