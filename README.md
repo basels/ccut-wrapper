@@ -21,16 +21,17 @@ Navigate to `http://localhost:localport/` (usually set as `http://0.0.0.0:5000/`
 The UI allows performing the following operations over the browser:
 
 #### Parse a `string` (get unit representation)
-<!-- TODO: add gif -->
+![](media/readme_parse.gif)
 
 #### Convert `string`s (get units transformation)
-<!-- TODO: add gif -->
+![](media/readme_convert.gif)
 
 #### Extract units from `xlsx` (get a suggested `json` annotation file)
-<!-- TODO: add gif -->
+![](media/readme_extract.gif)
 
-#### Annotate `json` (edit existing `json` annotation file)
-<!-- TODO: add gif -->
+#### Annotate `json` (upload and edit existing `json` annotation file)
+![](media/readme_annotate.gif)
+![](media/readme_edit.gif)
 
 ### Spreadsheets Validator:
 #### Generate a `json` dictionary file of detected units

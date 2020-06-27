@@ -16,8 +16,21 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
-    {% if result != '' %}
-        <pre>{{ result }}</pre>
+    {% if result|length == 8 %}
+        Operation result:
+        <pre>{{ result[0] }}</pre>
+        Operation return status:
+        <pre {% if result[1] != 0 %} style="color: red" {% endif %}>{{ result[1] }} ({{ result[2] }})</pre>
+        <hr />
+        <big>From:</big><br />
+        {% for cu_in in result[4] %}
+            <a href="/update_convert?cu=in&i={{loop.index}}">Choose</a><pre {% if src_idx == loop.index %} style="border-style: solid; border-width: 10px; color: black;" {% endif %}>{{ cu_in }}</pre>
+        {% endfor %}
+        <hr />
+        <big>To:</big><br />
+        {% for cu_out in result[5] %}
+            <a href="/update_convert?cu=out&i={{loop.index}}">Choose</a><pre {% if dst_idx == loop.index %} style="border-style: solid; border-width: 10px; color: black;" {% endif %}>{{ cu_out }}</pre>
+        {% endfor %}
     {% endif %}
 
 {% endblock %}

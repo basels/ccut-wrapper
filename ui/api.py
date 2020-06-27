@@ -23,6 +23,13 @@ ccut = ccut()
 # Init global variables
 g_active_json = dict()
 g_active_filename = ""
+''' g_conv_res tuple contains:
+    0: conv_val     1,2: conv_sts    3: orig_val     
+    4: src_str_list 5: dst_str_list  6: src_list     7: dst_list
+'''
+g_conv_res = list()
+g_conv_src_idx = 1
+g_conv_dst_idx = 1
 
 @app.route("/")
 def welcome():
@@ -47,14 +54,48 @@ def parse():
 def convert():
     ''' Page to handle Canonical Compound Unit Conversion '''
 
-    result = ''
+    global g_conv_res, g_conv_src_idx, g_conv_dst_idx
+
     form = ConversionForm()
     if form.validate_on_submit():
-        res = ccut.convert_str2str(form.in_unit.data, form.out_unit.data, float(form.in_val.data))
-        result = dumps(res, sort_keys=True, indent=4, separators=(',', ': '))
+        g_conv_src_idx = 1
+        g_conv_dst_idx = 1
+        src_ccu = ccut.get_all_ccu(form.in_unit.data)
+        src_str_list = list()
+        for cu in src_ccu:
+            src_str_list.append(dumps(cu, sort_keys=True, indent=4, separators=(',', ': ')))
 
-    # TODO: show list of all possible representation and choose
-    return render_template('ccu_convert.html', form=form, result=result)
+        dst_ccu = ccut.get_all_ccu(form.out_unit.data)
+        dst_str_list = list()
+        for cu in dst_ccu:
+            dst_str_list.append(dumps(cu, sort_keys=True, indent=4, separators=(',', ': ')))
+
+        g_conv_res = ccut.convert_ccu2ccu(src_ccu[g_conv_src_idx-1], dst_ccu[g_conv_dst_idx-1], float(form.in_val.data))
+        g_conv_res += (float(form.in_val.data), src_str_list, dst_str_list)
+        g_conv_res += (src_ccu, dst_ccu)
+    elif len(g_conv_res) != 0:
+        temp = g_conv_res
+        g_conv_res = ccut.convert_ccu2ccu(temp[6][g_conv_src_idx-1], temp[7][g_conv_dst_idx-1], temp[3])
+        g_conv_res += (temp[3], temp[4], temp[5], temp[6], temp[7])
+
+    return render_template('ccu_convert.html', form=form, result=g_conv_res,\
+                           src_idx=g_conv_src_idx, dst_idx=g_conv_dst_idx)
+
+@app.route('/update_convert', methods=['GET'])
+def update_convert():
+    ''' API to handle choosing radio-button options for conversion '''
+
+    global g_conv_src_idx, g_conv_dst_idx
+
+    ARG_IN_OR_OUT = 'cu'
+    ARG_IDX = 'i'
+    if ARG_IN_OR_OUT in request.args and ARG_IDX in request.args:
+        if request.args.get(ARG_IN_OR_OUT) == 'in':
+            g_conv_src_idx = int(request.args.get(ARG_IDX))
+        else:
+            g_conv_dst_idx = int(request.args.get(ARG_IDX))
+
+    return redirect(url_for('convert'))
 
 @app.route('/annotate', methods=['GET', 'POST'])
 def load_annotation_file():
