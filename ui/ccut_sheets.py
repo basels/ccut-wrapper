@@ -2,6 +2,9 @@ from argparse import ArgumentParser
 from baselutils import column_num2str, fclrprint
 from ccut import ccut, QUDT_PROPERTIES_NAMESPACE, CCUT_NAMESPACE
 from json import dump
+from openpyxl import load_workbook
+from openpyxl.comments import Comment
+from openpyxl.styles import PatternFill
 from os.path import basename
 from pandas import ExcelFile, Series, isnull
 from re import search as search_rx
@@ -46,6 +49,29 @@ def init_globals():
     global g_ccut_inst, g_tot_num_of_sheets
     g_ccut_inst = ccut()
     g_tot_num_of_sheets = 0
+
+# --- styling -----------------------------------------------------------------
+
+def colorize_spreadsheet(ant_dict, xls_fname):
+    ''' Colorize the annotated cells in an xlsx file '''
+
+    # Read excel file
+    workbook = load_workbook(xls_fname)
+
+    # TODO: Reset background color and comments
+    for sheet_n,sheet_d in ant_dict.items():
+        for col_n,col_d in sheet_d.items():
+            for row_n,row_d in col_d.items():
+                cell_idx = col_n+str(row_n)
+                workbook[sheet_n][cell_idx].fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type = 'solid')
+                comment = ''
+                for c_unit in row_d:
+                    for unit in c_unit['parts']:
+                        comment += unit['u'] + '|'
+                workbook[sheet_n][cell_idx].comment = Comment(comment, "CCUT")
+
+    workbook.save(xls_fname)
+    workbook.close()
 
 # --- processing --------------------------------------------------------------
 

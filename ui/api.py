@@ -2,7 +2,7 @@ from annotate import init_flat_search_lists, fuzzy_search_sheet, fuzzy_search_pr
                     fuzzy_search_unit, add_annotation_to_cell, update_cell_dimension
 from ccut import ccut
 from ccut.main.config import Config
-from ccut_sheets import init_globals, process_file
+from ccut_sheets import init_globals, process_file, colorize_spreadsheet
 from flask import Flask, request, redirect, jsonify, render_template, url_for
 from forms import ParseForm, ConversionForm, FileUploadForm, AnnotationEditForm
 from json import load, dump, dumps
@@ -23,6 +23,7 @@ ccut = ccut()
 # Init global variables
 g_active_json = dict()
 g_active_filename = ""
+g_active_xlsx_fname = ""
 ''' g_conv_res tuple contains:
     0: conv_val     1,2: conv_sts    3: orig_val     
     4: src_str_list 5: dst_str_list  6: src_list     7: dst_list
@@ -121,7 +122,7 @@ def load_annotation_file():
 def process_spreadsheet_file():
     ''' Page to handle processing excel file (xlsx). Creates json and redirects to editor-UI '''
 
-    global g_active_json, g_active_filename
+    global g_active_json, g_active_filename, g_active_xlsx_fname
 
     form = FileUploadForm()
     if form.validate_on_submit():
@@ -129,10 +130,10 @@ def process_spreadsheet_file():
         filename = secure_filename(f.filename)
         if not exists(STORAGE_FOLDER):
             makedirs(STORAGE_FOLDER)
-        spreadsheet_fname = STORAGE_FOLDER + filename
-        f.save(spreadsheet_fname)
-        g_active_json, _ = process_file(spreadsheet_fname)
-        g_active_filename = '.'.join(spreadsheet_fname.split('.')[:-1]) + '.ccut.json'
+        g_active_xlsx_fname = STORAGE_FOLDER + filename
+        f.save(g_active_xlsx_fname)
+        g_active_json, _ = process_file(g_active_xlsx_fname)
+        g_active_filename = '.'.join(g_active_xlsx_fname.split('.')[:-1]) + '.ccut.json'
         with open(g_active_filename, 'w') as outfile:
             dump(g_active_json, outfile, indent=2)
 
@@ -160,11 +161,13 @@ def edit_annotation_file():
 def save_annotation_file():
     ''' API to save the json annotation file '''
 
-    global g_active_json, g_active_filename
+    global g_active_json, g_active_filename, g_active_xlsx_fname
 
     if g_active_filename != "":
         with open(g_active_filename, 'w') as outfile:
             dump(g_active_json, outfile, indent=2)
+        if g_active_xlsx_fname != "":
+            colorize_spreadsheet(g_active_json, g_active_xlsx_fname)
 
     return redirect(url_for('edit_annotation_file'))
 
